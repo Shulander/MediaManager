@@ -27,28 +27,14 @@ public class Main {
     
     public static void main(String[] args) throws InterruptedException, ConfigurationException {
         Configuration config = new PropertiesConfiguration("config/config.properties");
-        log.info("*******************************************************");
-        log.info("*******************************************************");
-        log.info(config.getString("main.version"));
+        MediaManager mediaManager = new MediaManager();
+        mediaManager.load(config, "main.mediasections");
         
-        for (String mediaSections : config.getStringArray("main.mediasections")) {
-            log.info("******** "+mediaSections+" ********");
-            for (String fileExtension : config.getStringArray(mediaSections+".fileextensions")) {
-                log.info(fileExtension);    
+        for (String arg : args) {
+            File newFile = new File(arg);
+            if(newFile.exists()) {
+                mediaManager.process(newFile);
             }
-            for (String fileExtension : config.getStringArray(mediaSections+".fileFilters")) {
-                log.info(fileExtension);    
-            }
-            log.info(config.getString(mediaSections+".destinationPath"));
         }
-        
-        log.info("Hello this is an info message");
-        log.info("hello world!");
-        log.debug("Debug message");
-        log.error("Error message");
-        
-        log.info("*******************************************************");
-        log.info("*******************************************************");
-        
     }
 }
