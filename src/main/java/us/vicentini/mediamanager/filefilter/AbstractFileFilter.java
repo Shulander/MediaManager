@@ -22,6 +22,7 @@ public abstract class AbstractFileFilter {
     protected List<String> fileFilterList;
     protected List<String> fileExtensions;
     protected File destinationFolder;
+    protected LinkedList<String> fileFilterExclude;
 
     public void load(Configuration config, String section) {
         fileFilterName = section;
@@ -35,10 +36,27 @@ public abstract class AbstractFileFilter {
             fileExtensions.add(fileFilter.toString());
         });
 
+        fileFilterExclude = new LinkedList<>();
+        
+        if(config.containsKey(section + ".fileFilterExclude")) {
+            config.getList(section + ".fileFilterExclude").stream().forEach((fileFilter)-> {
+                fileFilterExclude.add(fileFilter.toString());
+            });
+        }
+        
         this.destinationFolder = new File(config.getString(section + ".destinationPath"));
     }
     
+    /**
+     *
+     * @param mediaPath
+     * @return
+     */
     public boolean hasMedia(File mediaPath) {
+        if(fileFilterExclude.stream().anyMatch((fileFilterExclude)-> (mediaPath.getName().contains(fileFilterExclude)))) {
+            return false;
+        }
+        
         if(mediaPath.isDirectory()) {
             for (File subdir : mediaPath.listFiles()) {
                 if(hasMedia(subdir))

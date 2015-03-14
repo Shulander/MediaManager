@@ -30,11 +30,31 @@ public class Main {
         MediaManager mediaManager = new MediaManager();
         mediaManager.load(config, "main.mediasections");
         
-        for (String arg : args) {
-            File newFile = new File(arg);
-            if(newFile.exists()) {
-                mediaManager.process(newFile);
+        log.info("************************************************************");
+        log.info("******************** Media Manager Started *****************");
+        log.info("************************************************************");
+        
+        log.info("args: "+args.length);
+        if(args.length == 0 || args.length > 2) {
+            log.info("This program supporsts 1 or 2 arguments:");
+            log.info("1 argument: it uses the full for the media");
+            log.info("2 argument: the first argument as a base path and the second as specific path");
+        }
+        
+        File mediaPath = new File(args[0].replace("\"", ""));
+        if(args.length >1 ){
+            File subDir = new File(mediaPath, args[1].replace("\"", ""));
+            if(mediaPath.exists() && mediaPath.isDirectory() && subDir.exists()) {
+                log.info("concatening the subdirectory");
+                mediaPath = subDir;
             }
         }
+        
+        log.info("processing media: "+mediaPath.getAbsolutePath());
+        if(mediaPath.exists()) {
+            mediaManager.process(mediaPath);
+        }
+        log.info("********************* Media Manager Ended ******************");
+        
     }
 }

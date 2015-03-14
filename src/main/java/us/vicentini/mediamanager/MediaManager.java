@@ -37,7 +37,7 @@ public class MediaManager {
     
     public void process(File mediaPath) {
         List<CopyFileAction> filesToCopy = new LinkedList<>();
-        
+        log.info("searching files to copy");
         for (AbstractFileFilter fileFilter : fileFilters) {
             filesToCopy.addAll(fileFilter.process(mediaPath));
             if(!filesToCopy.isEmpty()) {
@@ -45,13 +45,17 @@ public class MediaManager {
             }
         };
         
+        log.info("proccess copy");
         for (CopyFileAction action : filesToCopy) {
             try {
+                log.info("[COPY] "+action.toString());
                 action.process();
             } catch (IOException ex) {
-                log.error("Error while coping the file "+action.toString()+" ", ex);
+                log.error("Error while coping the file "+action.toString()+": "+ex.getMessage(), ex);
             }
         }
+        log.info("proccess copy ended");
+        
         
     }
     

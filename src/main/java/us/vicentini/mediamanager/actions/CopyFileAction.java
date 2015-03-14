@@ -21,8 +21,9 @@ public class CopyFileAction {
         if(!destinationPath.exists()) {
             Files.createDirectories(destinationPath.toPath());
         }
-        
-        Files.copy(fromFile.toPath(), (new File(destinationPath, fromFile.getName())).toPath());
+        if(!(new File(destinationPath, fromFile.getName())).exists()) {
+            Files.copy(fromFile.toPath(), (new File(destinationPath, fromFile.getName())).toPath());
+        }
     }
  
     @Override

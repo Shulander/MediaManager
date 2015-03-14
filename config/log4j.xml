@@ -3,7 +3,7 @@
 <log4j:configuration debug="true" xmlns:log4j='http://jakarta.apache.org/log4j/'>
 
     <appender name="log-app" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="logs/my-log.log"/>
+        <param name="File" value="logs/MediaManager.log"/>
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
 
         <layout class="org.apache.log4j.PatternLayout">

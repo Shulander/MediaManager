@@ -53,6 +53,10 @@ public class SeriesFileFilter extends AbstractFileFilter {
 
     @Override
     public boolean hasMedia(File mediaPath) {
+        if(fileFilterExclude.stream().anyMatch((fileExclude)-> (mediaPath.getName().contains(fileExclude)))) {
+            return false;
+        }
+        
         if (mediaPath.isDirectory()) {
             for (File subdir : mediaPath.listFiles()) {
                 if (hasMedia(subdir)) {
