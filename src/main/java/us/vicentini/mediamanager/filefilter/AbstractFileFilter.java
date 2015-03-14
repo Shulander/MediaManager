@@ -16,7 +16,7 @@ import us.vicentini.mediamanager.actions.CopyFileAction;
  */
 public abstract class AbstractFileFilter {
 
-    private final static Log log = LogFactory.getLog(Main.class);
+    private final static Log log = LogFactory.getLog(AbstractFileFilter.class);
 
     protected String fileFilterName;
     protected List<String> fileFilterList;
@@ -53,7 +53,8 @@ public abstract class AbstractFileFilter {
      * @return
      */
     public boolean hasMedia(File mediaPath) {
-        if(fileFilterExclude.stream().anyMatch((fileFilterExclude)-> (mediaPath.getName().contains(fileFilterExclude)))) {
+        if(fileFilterExclude.stream().anyMatch((fileExclude)-> (mediaPath.getName().contains(fileExclude)))) {
+            log.info("File found in the excluded list: "+mediaPath.getName());
             return false;
         }
         
