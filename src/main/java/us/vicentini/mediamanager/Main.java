@@ -28,7 +28,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, ConfigurationException {
         Configuration config = new PropertiesConfiguration("config/config.properties");
         MediaManager mediaManager = new MediaManager();
-        mediaManager.load(config, "main.mediasections");
+        mediaManager.load(config, "main");
         
         log.info("************************************************************");
         log.info("******************** Media Manager Started *****************");
