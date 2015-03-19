@@ -30,4 +30,14 @@ public class CopyFileAction {
     public String toString(){
         return fromFile.getAbsolutePath()+" to "+destinationPath.getAbsolutePath();
     }
+
+    public File getFromFile() {
+        return fromFile;
+    }
+
+    public File getDestinationPath() {
+        return destinationPath;
+    }
+    
+    
 }

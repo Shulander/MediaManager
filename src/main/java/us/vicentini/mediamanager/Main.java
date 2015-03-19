@@ -39,6 +39,7 @@ public class Main {
             log.info("This program supporsts 1 or 2 arguments:");
             log.info("1 argument: it uses the full for the media");
             log.info("2 argument: the first argument as a base path and the second as specific path");
+            return;
         }
         
         File mediaPath = new File(args[0].replace("\"", ""));

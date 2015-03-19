@@ -31,6 +31,7 @@ public abstract class AbstractMail {
     public boolean sendMessage(String to, String subject, String strMessage) {
         Session session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(user, password);
                     }
@@ -42,7 +43,7 @@ public abstract class AbstractMail {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(to));
             message.setSubject(subject);
-            message.setText(strMessage);
+            message.setContent(strMessage, "text/html; charset=utf-8");
 
             Transport.send(message);
 

@@ -44,7 +44,6 @@ public class MediaManager {
             try {
                 AbstractNotification newNotification = (AbstractNotification) Class.forName(config.getString(notificationSection)).newInstance();
                 newNotification.load(config, notificationSection);
-                newNotification.sendNotification(null);
                 notificiations.add(newNotification);
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
                 log.error("Error instantiating " + notificationSection + ": " + ex.getMessage(), ex);
