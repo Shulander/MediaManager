@@ -19,13 +19,13 @@ public class MediaManager {
 
     private List<AbstractFileFilter> fileFilters;
 
-    private List<AbstractNotification> notificiations;
+    private List<AbstractNotification> notifications;
 
 
-    void load(Configuration config, String mainmediasections) {
+    void load(Configuration config, String mainConfigurationSection) {
         fileFilters = new LinkedList<>();
 
-        for (String mediaSections : config.getStringArray(mainmediasections + ".mediasections")) {
+        for (String mediaSections : config.getStringArray(mainConfigurationSection + ".mediasections")) {
             try {
                 AbstractFileFilter newFileFilter =
                         (AbstractFileFilter) Class.forName(config.getString(mediaSections)).newInstance();
@@ -36,14 +36,14 @@ public class MediaManager {
             }
         }
 
-        notificiations = new LinkedList<>();
-        for (String notificationSection : config.getStringArray(mainmediasections + ".notifications")) {
+        notifications = new LinkedList<>();
+        for (String notificationSection : config.getStringArray(mainConfigurationSection + ".notifications")) {
 
             try {
                 AbstractNotification newNotification =
                         (AbstractNotification) Class.forName(config.getString(notificationSection)).newInstance();
                 newNotification.load(config, notificationSection);
-                notificiations.add(newNotification);
+                notifications.add(newNotification);
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
                 log.error("Error instantiating " + notificationSection + ": " + ex.getMessage(), ex);
             }
@@ -71,8 +71,8 @@ public class MediaManager {
             }
         }
         log.info("send notifications");
-        for (AbstractNotification notificiation : notificiations) {
-            notificiation.sendNotification(filesToCopy);
+        for (AbstractNotification notification : notifications) {
+            notification.sendNotification(filesToCopy);
         }
         log.info("Done");
     }

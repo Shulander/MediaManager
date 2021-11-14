@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @SpringBootApplication
@@ -52,38 +53,40 @@ public class MediaManagerApplication implements CommandLineRunner {
             log.info("arg: " + arg);
         }
 
-        File mediaPath = new File(args[0].replace("\"", ""));
-        if (args.length > 1) {
-//            File subDir = new File(mediaPath, args[1].replace("\"", ""));
-
-            String[] subnames = args[1].replace("\"", "").split("(\\.|\\s)");
-            File newBasePath = findMostProbablySubdir(subnames, mediaPath);
-            if (mediaPath.exists() && mediaPath.isDirectory() && newBasePath != null) {
-                log.info("concatening the subdirectory");
-                mediaPath = newBasePath;
-            }
-        }
+        File mediaPath = getMediaPath(args);
 
         log.info("processing media: " + mediaPath.getAbsolutePath());
         if (mediaPath.exists()) {
             mediaManager.process(mediaPath);
         }
         log.info("********************* Media Manager Ended ******************");
-
-
     }
 
 
-    public static File findMostProbablySubdir(String[] subnames, File basePath) {
-        if (basePath.exists() && basePath.isDirectory()) {
+    private File getMediaPath(String[] args) {
+        File mediaPath = new File(args[0].replace("\"", ""));
+        if (args.length > 1) {
+            String[] subNames = args[1].replace("\"", "").split("(\\.|\\s)");
+            File newBasePath = findMostProbablySubDirectories(subNames, mediaPath);
+            if (mediaPath.isDirectory() && newBasePath != null) {
+                log.info("concatenating the subdirectory");
+                mediaPath = newBasePath;
+            }
+        }
+        return mediaPath;
+    }
+
+
+    public static File findMostProbablySubDirectories(String[] subDirectoryNames, File basePath) {
+        if (basePath.isDirectory()) {
             int fromIndex = 0;
-            List<File> baseList = new LinkedList<>();
-            baseList.addAll(Arrays.asList(basePath.listFiles()));
+            File[] files = Objects.requireNonNull(basePath.listFiles());
+            List<File> baseList = new LinkedList<>(Arrays.asList(files));
             List<File> subList = new LinkedList<>();
-            for (int i = 0; i < subnames.length; i++) {
+            for (String subName : subDirectoryNames) {
                 for (File serie : baseList) {
-                    int index = serie.getName().toLowerCase().indexOf(subnames[i].toLowerCase(), fromIndex);
-                    if (serie.isDirectory() && index >= 0 && index <= (fromIndex + subnames[i].length())) {
+                    int index = serie.getName().toLowerCase().indexOf(subName.toLowerCase(), fromIndex);
+                    if (serie.isDirectory() && index >= 0 && index <= (fromIndex + subName.length())) {
                         subList.add(serie);
                     }
                 }
@@ -93,7 +96,7 @@ public class MediaManagerApplication implements CommandLineRunner {
                 baseList.clear();
                 baseList.addAll(subList);
                 subList.clear();
-                fromIndex += subnames[i].length() + 1;
+                fromIndex += subName.length() + 1;
             }
         }
         return null;

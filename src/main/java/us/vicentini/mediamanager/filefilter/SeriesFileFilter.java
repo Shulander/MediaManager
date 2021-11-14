@@ -1,5 +1,10 @@
 package us.vicentini.mediamanager.filefilter;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.lang.WordUtils;
+import us.vicentini.mediamanager.actions.CopyFileAction;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,19 +13,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.WordUtils;
-import us.vicentini.mediamanager.actions.CopyFileAction;
-
 /**
- *
  * @author Shulander
  */
 @Slf4j
 public class SeriesFileFilter extends AbstractFileFilter {
 
     private List<Pattern> patterns;
+
 
     @Override
     public void load(Configuration config, String section) {
@@ -32,52 +32,18 @@ public class SeriesFileFilter extends AbstractFileFilter {
         }
     }
 
-    public static void main(String[] args) {
-        Pattern p = Pattern.compile("(.*?)[.\\s][sS](\\d{2})[eE](\\d{2})(.*)");
-
-        String[] tests = {"xyz title name S01E02 bla bla",
-            "bla bla title name.S03E04",
-            "the season title name s05e03",
-            "Big Hero   6 3D S01E03 2014 1080p BRRip Half-OU x264 AC3-JYK"};
-
-        for (String s : tests) {
-            Matcher m = p.matcher(s);
-            if (m.matches()) {
-                System.out.printf("Name: %-23s Season: %s Episode: %s [%s]%n",
-                        m.group(1), m.group(2), m.group(3), m.group(4));
-            }
-        }
-
-        for (String split : "Big.Hero 6".split("(\\.|\\s)")) {
-            System.out.println(split);
-        }
-
-    }
 
     @Override
-    public boolean hasMedia(File mediaPath) {
-        if(fileFilterExclude.stream().anyMatch((fileExclude)-> (mediaPath.getName().contains(fileExclude)))) {
-            log.info("File found in the excluded list: "+mediaPath.getName());
-            return false;
-        }
-        
-        if (mediaPath.isDirectory()) {
-            for (File subdir : mediaPath.listFiles()) {
-                if (hasMedia(subdir)) {
-                    return true;
-                }
-            }
-        }
-
+    public boolean anyMatchingMedia(File mediaPath) {
         for (Pattern pattern : patterns) {
             Matcher m = pattern.matcher(mediaPath.getName());
             if (m.matches()) {
                 return true;
             }
         }
-
         return false;
     }
+
 
     @Override
     public CopyFileAction createFileAction(File mediaPath, File basePath) {
@@ -91,6 +57,7 @@ public class SeriesFileFilter extends AbstractFileFilter {
         }
         return null;
     }
+
 
     @Override
     protected Collection<? extends CopyFileAction> reviewFiles(File mediaPath, File basePath) {
@@ -111,8 +78,9 @@ public class SeriesFileFilter extends AbstractFileFilter {
         return returnValue;
     }
 
+
     public File findMostProbablySubdir(String[] subnames, File basePath) {
-        if(basePath.exists()) {
+        if (basePath.exists()) {
             int fromIndex = 0;
             List<File> baseList = new LinkedList<>();
             baseList.addAll(Arrays.asList(basePath.listFiles()));
@@ -131,10 +99,11 @@ public class SeriesFileFilter extends AbstractFileFilter {
                 baseList.addAll(subList);
                 subList.clear();
                 fromIndex += subnames[i].length() + 1;
-            }   
+            }
         }
         return createNewSubDir(subnames, basePath);
     }
+
 
     private File createNewSubDir(String[] subnames, File basePath) {
         StringBuilder sb = new StringBuilder(WordUtils.capitalize(subnames[0]));
