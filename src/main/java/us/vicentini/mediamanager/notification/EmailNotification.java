@@ -14,14 +14,14 @@ import us.vicentini.mediamanager.actions.CopyFileAction;
 public class EmailNotification extends AbstractNotification {
     private String to;
     private String subject;
-    private String mensagem;
+    private String message;
     private AbstractMail mailService = null;
 
     @Override
     protected void loadImpl(Configuration config, String section) {
         to = config.getString(section+".to");
         subject = config.getString(section+".subject");
-        mensagem = config.getString(section+".mensagem");
+        message = config.getString(section + ".message");
         try {
             mailService = (AbstractMail)Class.forName(config.getString(section+".impl")).newInstance();
             mailService.load(config, section+".impl");
@@ -36,12 +36,12 @@ public class EmailNotification extends AbstractNotification {
         if(actions == null || actions.isEmpty()) {
             return true;
         }
-        actions.stream().forEach((action) -> {
+        actions.forEach((action) -> {
             sb.append(action.getDestinationPath().getAbsolutePath()).append("\\");
             sb.append("<b>").append(action.getFromFile().getName()).append("</b>");
             sb.append("<br />");
         });
         
-       return mailService.sendMessage(to, subject, mensagem.replace("[FILES]", sb.toString()));
+       return mailService.sendMessage(to, subject, message.replace("[FILES]", sb.toString()));
     }
 }

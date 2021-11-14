@@ -4,19 +4,17 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import us.vicentini.mediamanager.Main;
 import us.vicentini.mediamanager.actions.CopyFileAction;
 
 /**
  *
  * @author Shulander
  */
+@Slf4j
 public abstract class AbstractFileFilter {
-
-    private final static Log log = LogFactory.getLog(AbstractFileFilter.class);
 
     protected String fileFilterName;
     protected List<String> fileFilterList;

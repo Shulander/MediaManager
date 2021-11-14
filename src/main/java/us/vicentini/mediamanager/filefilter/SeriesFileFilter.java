@@ -7,19 +7,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.WordUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import us.vicentini.mediamanager.Main;
 import us.vicentini.mediamanager.actions.CopyFileAction;
 
 /**
  *
  * @author Shulander
  */
+@Slf4j
 public class SeriesFileFilter extends AbstractFileFilter {
-    private final static Log log = LogFactory.getLog(SeriesFileFilter.class);
 
     private List<Pattern> patterns;
 
