@@ -1,6 +1,9 @@
 package us.vicentini.mediamanager;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -42,12 +45,19 @@ public class Main {
             return;
         }
         
+        for (String arg : args) {
+            log.info("arg: "+arg);
+        }
+        
         File mediaPath = new File(args[0].replace("\"", ""));
         if(args.length >1 ){
-            File subDir = new File(mediaPath, args[1].replace("\"", ""));
-            if(mediaPath.exists() && mediaPath.isDirectory() && subDir.exists()) {
+//            File subDir = new File(mediaPath, args[1].replace("\"", ""));
+            
+            String[] subnames = args[1].replace("\"", "").split("(\\.|\\s)");
+            File newBasePath = findMostProbablySubdir(subnames, mediaPath);
+            if(mediaPath.exists() && mediaPath.isDirectory() && newBasePath!=null) {
                 log.info("concatening the subdirectory");
-                mediaPath = subDir;
+                mediaPath = newBasePath;
             }
         }
         
@@ -57,5 +67,31 @@ public class Main {
         }
         log.info("********************* Media Manager Ended ******************");
         
+    }
+    
+    
+    public static File findMostProbablySubdir(String[] subnames, File basePath) {
+        if(basePath.exists() && basePath.isDirectory()) {
+            int fromIndex = 0;
+            List<File> baseList = new LinkedList<>();
+            baseList.addAll(Arrays.asList(basePath.listFiles()));
+            List<File> subList = new LinkedList<>();
+            for (int i = 0; i < subnames.length; i++) {
+                for (File serie : baseList) {
+                    int index = serie.getName().toLowerCase().indexOf(subnames[i].toLowerCase(), fromIndex);
+                    if (serie.isDirectory() && index >= 0 && index <= (fromIndex + subnames[i].length())) {
+                        subList.add(serie);
+                    }
+                }
+                if (subList.size() == 1) {
+                    return subList.get(0);
+                }
+                baseList.clear();
+                baseList.addAll(subList);
+                subList.clear();
+                fromIndex += subnames[i].length() + 1;
+            }   
+        }
+        return null;
     }
 }

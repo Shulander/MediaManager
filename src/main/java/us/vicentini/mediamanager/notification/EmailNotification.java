@@ -33,6 +33,9 @@ public class EmailNotification extends AbstractNotification {
     @Override
     public boolean sendNotification(List<CopyFileAction> actions) {
         StringBuilder sb = new StringBuilder();
+        if(actions == null || actions.isEmpty()) {
+            return true;
+        }
         actions.stream().forEach((action) -> {
             sb.append(action.getDestinationPath().getAbsolutePath()).append("\\");
             sb.append("<b>").append(action.getFromFile().getName()).append("</b>");
