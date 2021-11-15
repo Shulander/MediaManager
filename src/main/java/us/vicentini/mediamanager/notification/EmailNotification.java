@@ -36,7 +36,7 @@ public class EmailNotification extends AbstractNotification {
         if(actions == null || actions.isEmpty()) {
             return true;
         }
-        actions.forEach((action) -> {
+        actions.forEach(action -> {
             sb.append(action.getDestinationPath().getAbsolutePath()).append("\\");
             sb.append("<b>").append(action.getFromFile().getName()).append("</b>");
             sb.append("<br />");

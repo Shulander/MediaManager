@@ -33,25 +33,21 @@ public class MediaManagerApplication implements CommandLineRunner {
             log.info("args[{}]: {}", i, args[i]);
         }
 
-        Configuration config = new PropertiesConfiguration("config/config-dev.properties");
-        MediaManager mediaManager = new MediaManager();
-        mediaManager.load(config, "main");
-
         log.info("************************************************************");
         log.info("******************** Media Manager Started *****************");
         log.info("************************************************************");
 
         log.info("args: " + args.length);
         if (args.length == 0 || args.length > 2) {
-            log.info("This program supporsts 1 or 2 arguments:");
-            log.info("1 argument: it uses the full for the media");
-            log.info("2 argument: the first argument as a base path and the second as specific path");
+            log.warn("This program supports 1 or 2 arguments:");
+            log.warn("1 argument: it uses the direct path to the media");
+            log.warn("2 argument: the first argument has the base media path and the second as specific path");
             return;
         }
 
-        for (String arg : args) {
-            log.info("arg: " + arg);
-        }
+        Configuration config = new PropertiesConfiguration("config/config-dev.properties");
+        MediaManager mediaManager = new MediaManager();
+        mediaManager.load(config, "main");
 
         File mediaPath = getMediaPath(args);
 
@@ -66,7 +62,8 @@ public class MediaManagerApplication implements CommandLineRunner {
     private File getMediaPath(String[] args) {
         File mediaPath = new File(args[0].replace("\"", ""));
         if (args.length > 1) {
-            String[] subNames = args[1].replace("\"", "").split("(\\.|\\s)");
+            String regex = "[.|\\s]";
+            String[] subNames = args[1].replace("\"", "").split(regex);
             File newBasePath = findMostProbablySubDirectories(subNames, mediaPath);
             if (mediaPath.isDirectory() && newBasePath != null) {
                 log.info("concatenating the subdirectory");
@@ -86,7 +83,7 @@ public class MediaManagerApplication implements CommandLineRunner {
             for (String subName : subDirectoryNames) {
                 for (File serie : baseList) {
                     int index = serie.getName().toLowerCase().indexOf(subName.toLowerCase(), fromIndex);
-                    if (serie.isDirectory() && index >= 0 && index <= (fromIndex + subName.length())) {
+                    if (serie.isDirectory() && index >= 0 && index <= fromIndex + subName.length()) {
                         subList.add(serie);
                     }
                 }

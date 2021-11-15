@@ -1,6 +1,7 @@
 package us.vicentini.mediamanager.actions;
 
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
  * @author Shulander
  */
 @Slf4j
+@ToString
 @RequiredArgsConstructor
 public class CopyFileAction {
     private final File fromFile;
@@ -35,11 +37,6 @@ public class CopyFileAction {
         log.info("Done");
     }
  
-    @Override
-    public String toString(){
-        return fromFile.getAbsolutePath()+" to "+destinationPath.getAbsolutePath();
-    }
-
     public File getFromFile() {
         return fromFile;
     }

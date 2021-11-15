@@ -61,13 +61,13 @@ public class MediaManager {
             }
         }
 
-        log.info("proccess copy");
+        log.info("process copy");
         for (CopyFileAction action : filesToCopy) {
             try {
                 log.info("[COPY] " + action.toString());
                 action.process();
             } catch (IOException ex) {
-                log.error("Error while coping the file " + action.toString() + ": " + ex.getMessage(), ex);
+                log.error("Error while coping the file {}: {}", action, ex.getMessage(), ex);
             }
         }
         log.info("send notifications");
