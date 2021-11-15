@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,16 +49,17 @@ public class SeriesFileFilter extends AbstractFileFilter {
 
 
     @Override
-    public CopyFileAction createFileAction(File mediaPath, File basePath) {
+    public Optional<CopyFileAction> createFileAction(File mediaPath, File basePath) {
         for (Pattern pattern : patterns) {
             Matcher m = pattern.matcher(mediaPath.getName());
             if (m.matches()) {
                 String[] subnames = m.group(1).split("[.|\\s]");
                 File newBasePath = defineTargetDirectory(subnames, basePath);
-                return new CopyFileAction(mediaPath, new File(newBasePath, "S" + m.group(2)));
+                CopyFileAction copyFileAction = new CopyFileAction(mediaPath, new File(newBasePath, "S" + m.group(2)));
+                return Optional.of(copyFileAction);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
 
@@ -73,7 +75,8 @@ public class SeriesFileFilter extends AbstractFileFilter {
             }
         } else {
             if (includeFile(mediaPath)) {
-                returnValue.add(createFileAction(mediaPath, basePath));
+                createFileAction(mediaPath, basePath)
+                        .ifPresent(returnValue::add);
             }
         }
 

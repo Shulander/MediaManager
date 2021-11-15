@@ -1,6 +1,8 @@
 package us.vicentini.mediamanager.filefilter;
 
 import java.io.File;
+import java.util.Optional;
+
 import us.vicentini.mediamanager.actions.CopyFileAction;
 
 /**
@@ -17,8 +19,8 @@ public class MovieFileFilter extends AbstractFileFilter {
 
 
     @Override
-    public CopyFileAction createFileAction(File mediaPath, File basePath) {
-        return new CopyFileAction(mediaPath, basePath);
+    public Optional<CopyFileAction> createFileAction(File mediaPath, File basePath) {
+        return Optional.of(new CopyFileAction(mediaPath, basePath));
     }
     
 }

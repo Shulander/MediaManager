@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Shulander
@@ -97,7 +98,8 @@ public abstract class AbstractFileFilter {
             }
         } else {
             if (includeFile(mediaPath)) {
-                returnValue.add(createFileAction(mediaPath, basePath));
+                createFileAction(mediaPath, basePath)
+                        .ifPresent(returnValue::add);
             }
         }
 
@@ -105,6 +107,6 @@ public abstract class AbstractFileFilter {
     }
 
 
-    public abstract CopyFileAction createFileAction(File mediaPath, File basePath);
+    public abstract Optional<CopyFileAction> createFileAction(File mediaPath, File basePath);
 
 }
