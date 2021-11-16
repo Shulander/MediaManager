@@ -7,13 +7,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import us.vicentini.mediamanager.util.FileUtils;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
@@ -65,36 +61,10 @@ public class MediaManagerApplication implements CommandLineRunner {
         if (args.length > 1 && mediaPath.isDirectory()) {
             String regex = "[.|\\s]";
             String[] subNames = args[1].replace("\"", "").split(regex);
-            Optional<File> newBasePath = findMostProbablySubDirectories(subNames, mediaPath);
-
-            return newBasePath.orElse(mediaPath);
+            return FileUtils.findMostProbablySubDirectories(subNames, mediaPath)
+                    .orElse(mediaPath);
         }
         return mediaPath;
     }
 
-
-    public static Optional<File> findMostProbablySubDirectories(String[] subDirectoryNames, File basePath) {
-        if (basePath.isDirectory()) {
-            int fromIndex = 0;
-            File[] files = Objects.requireNonNull(basePath.listFiles());
-            List<File> baseList = new LinkedList<>(Arrays.asList(files));
-            List<File> subList = new LinkedList<>();
-            for (String subName : subDirectoryNames) {
-                for (File serie : baseList) {
-                    int index = serie.getName().toLowerCase().indexOf(subName.toLowerCase(), fromIndex);
-                    if (serie.isDirectory() && index >= 0 && index <= fromIndex + subName.length()) {
-                        subList.add(serie);
-                    }
-                }
-                if (subList.size() == 1) {
-                    return Optional.of(subList.get(0));
-                }
-                baseList.clear();
-                baseList.addAll(subList);
-                subList.clear();
-                fromIndex += subName.length() + 1;
-            }
-        }
-        return Optional.empty();
-    }
 }

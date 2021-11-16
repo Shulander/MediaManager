@@ -2,19 +2,16 @@ package us.vicentini.mediamanager.filefilter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.WordUtils;
 import us.vicentini.mediamanager.actions.CopyFileAction;
 import us.vicentini.mediamanager.util.FileUtils;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * @author Shulander
@@ -85,38 +82,9 @@ public class SeriesFileFilter extends AbstractFileFilter {
 
 
     private File defineTargetDirectory(String[] subNames, File basePath) {
-        if (basePath.isDirectory()) {
-            int fromIndex = 0;
-            List<File> baseList = Arrays.asList(FileUtils.listFiles(basePath, File::isDirectory));
-            for (String subName : subNames) {
-                List<File> subList = findMatchingFolders(fromIndex, baseList, subName);
-                if (subList.size() == 1) {
-                    return subList.get(0);
-                }
-                baseList = subList;
-                fromIndex += subName.length() + 1;
-            }
-        }
-        return createNewSubDir(subNames, basePath);
+        return FileUtils.findMostProbablySubDirectories(subNames, basePath)
+                .orElseGet(() -> FileUtils.createNewSubDir(subNames, basePath));
     }
 
-
-    private List<File> findMatchingFolders(int fromIndex, List<File> baseList, String subName) {
-        return baseList.stream()
-                .filter(directory -> {
-                    int index = directory.getName().toLowerCase().indexOf(subName.toLowerCase(), fromIndex);
-                    return index >= 0 && index <= fromIndex + subName.length();
-                })
-                .collect(Collectors.toList());
-    }
-
-
-    private File createNewSubDir(String[] subnames, File basePath) {
-        String newDirectory = Arrays.stream(subnames)
-                .map(WordUtils::capitalize)
-                .collect(Collectors.joining("."));
-
-        return new File(basePath, newDirectory);
-    }
 
 }
