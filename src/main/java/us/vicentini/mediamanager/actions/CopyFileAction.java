@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- *
  * @author Shulander
  */
 @Slf4j
@@ -22,28 +21,28 @@ public class CopyFileAction {
 
 
     public void process() throws IOException {
-        if(!destinationPath.exists()) {
+        if (!destinationPath.exists()) {
             Files.createDirectories(destinationPath.toPath());
         }
         Path source = fromFile.toPath();
         File toFile = new File(destinationPath, fromFile.getName());
         Path target = toFile.toPath();
         log.info("Copy from:{}, to:{}", source, target);
-        if(!toFile.exists()) {
+        if (!toFile.exists()) {
             Files.copy(source, target);
         } else {
             log.warn("Target file already exists: {}", target);
         }
         log.info("Done");
     }
- 
+
+
     public File getFromFile() {
         return fromFile;
     }
 
+
     public File getDestinationPath() {
         return destinationPath;
     }
-    
-    
 }
